@@ -93,7 +93,7 @@ def rss_feed():
     for podcast in podcast_files:
         fe = fg.add_entry()
         fe.title(podcast['title'])
-        fe.link(href=url_for('download_file', filename=podcast['url'], _external=True))
+        fe.link(href=url_for('download_file', filename=podcast['url'], _external=False))
         fe.published(parse_date_from_filename(podcast['url']))
         fe.description('Épisode de podcast')
         
