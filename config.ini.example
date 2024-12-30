@@ -10,7 +10,9 @@ base_url = https://example.com
 author = Votre Nom
 email = contact@example.com
 language = fr
-image_url = https://example.com/podcast-cover.jpg
+# L'image doit être placée dans le dossier static/images/
+# Vous pouvez utiliser une URL absolue ou un chemin relatif commençant par /static/
+image_url = /static/images/podcast-cover.svg
 categories = Religion & Spirituality,Christianity
 
 # Directory where podcast files are stored

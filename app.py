@@ -11,7 +11,7 @@ from urllib.parse import urljoin
 import mimetypes
 import email.utils
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path='/static', static_folder='static')
 app.config['SECRET_KEY'] = 'your-secret-key'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
 app.config['SQLALCHEMY_TRACK_CHANGES'] = False
@@ -30,7 +30,7 @@ PODCAST_CONFIG = {
     'title': config.get('podcasts', 'podcast_title', fallback='Podcasts'),
     'description': config.get('podcasts', 'podcast_description', fallback='Liste des podcasts disponibles'),
     'base_url': config.get('podcasts', 'base_url', fallback='').rstrip('/'),
-    'image_url': config.get('podcasts', 'image_url', fallback=''),
+    'image_url': config.get('podcasts', 'image_url', fallback='/static/images/podcast-cover.jpg'),
     'author': config.get('podcasts', 'author', fallback=''),
     'email': config.get('podcasts', 'email', fallback=''),
     'categories': config.get('podcasts', 'categories', fallback='Religion & Spirituality').split(','),

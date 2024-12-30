@@ -12,6 +12,7 @@ Application web Flask pour gérer et diffuser des podcasts avec un flux RSS auto
 - 📅 Tri chronologique des épisodes
 - 🎨 Interface moderne avec Bootstrap
 - 🔗 Support des reverse proxy avec URLs configurables
+- 🖼️ Gestion des images de couverture
 
 ## Prérequis
 
@@ -39,16 +40,26 @@ cd podcast-rss-auto
      - `author` : Le nom de l'auteur du podcast
      - `email` : L'email de contact
      - `language` : La langue du podcast (ex: fr)
-     - `image_url` : L'URL de l'image de couverture du podcast
+     - `image_url` : L'URL ou le chemin de l'image de couverture
      - `categories` : Les catégories iTunes (séparées par des virgules)
    - Ajustez le port dans `docker-compose.yml` si nécessaire (par défaut : 5000)
 
-3. Créez le dossier pour vos podcasts :
+3. Créez les dossiers nécessaires :
 ```bash
 mkdir -p podcasts
+mkdir -p static/images
 ```
 
-4. Démarrez l'application :
+4. Ajoutez votre image de couverture :
+   - Placez votre image dans le dossier `static/images/`
+   - Formats recommandés : JPG ou PNG, dimensions minimales 1400x1400 pixels
+   - Par défaut, une image SVG basique est fournie : `static/images/podcast-cover.svg`
+   - Mettez à jour `image_url` dans `config.ini` avec le chemin de votre image :
+     ```ini
+     image_url = /static/images/votre-image.jpg
+     ```
+
+5. Démarrez l'application :
 ```bash
 docker-compose up --build
 ```
@@ -67,6 +78,7 @@ L'application est conçue pour fonctionner derrière un reverse proxy. Pour cela
    - Les liens dans le flux RSS
    - Les URLs de téléchargement des fichiers
    - Les liens de navigation dans l'interface
+   - Les URLs des images (si vous utilisez des chemins relatifs)
 
 2. Configurez votre reverse proxy pour rediriger le trafic vers le port de l'application (5000 par défaut)
 
@@ -79,13 +91,20 @@ L'application est conçue pour fonctionner derrière un reverse proxy. Pour cela
    }
    ```
 
-## Structure des fichiers podcasts
+## Structure des fichiers
 
+### Podcasts
 Les fichiers audio doivent être placés dans le dossier `podcasts` avec le format de nom suivant :
 ```
 JJMMAA_HHMM_titre-de-l-episode.mp3
 ```
 Exemple : `010124_0615_emission-du-matin.mp3`
+
+### Images et fichiers statiques
+- Le dossier `static/` contient tous les fichiers statiques
+- Les images doivent être placées dans `static/images/`
+- L'image de couverture par défaut est `static/images/podcast-cover.svg`
+- Vous pouvez utiliser des chemins relatifs (`/static/images/...`) ou des URLs absolues pour `image_url`
 
 ## Configuration
 
@@ -102,7 +121,7 @@ Le fichier `config.ini` permet de configurer :
 - `author` : Le nom de l'auteur du podcast
 - `email` : L'email de contact
 - `language` : La langue du podcast (ex: fr)
-- `image_url` : L'URL de l'image de couverture du podcast
+- `image_url` : L'URL ou le chemin de l'image de couverture
 - `categories` : Les catégories iTunes (séparées par des virgules)
 
 ### Formats et scan
