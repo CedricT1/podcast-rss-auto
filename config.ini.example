@@ -1,23 +1,23 @@
 [podcasts]
-# Titre du podcast
-podcast_title = Mon Podcast
-podcast_description = Description de mon podcast
+# Podcast title
+podcast_title = Une heure de louange chez vous, chaque matin à partir de 6h15
+podcast_description = Chaque jour retrouvez une heure de louange chez vous avec ses chroniques
 
-# Répertoire des fichiers podcasts
+# Directory where podcast files are stored
 podcast_directory = data/podcasts
 
-# Formats audio supportés
+# Supported audio formats
 supported_formats = mp3,m4a,wav
 
-# Paramètres de scan
+# Scan settings
 scan_interval = 3600
 recursive_scan = true
 
-# Paramètres des métadonnées
+# Metadata settings
 read_id3_tags = true
 generate_thumbnails = true
 
 [logging]
-# Configuration des logs
+# Logging configuration
 log_level = INFO
-log_file = podcast_scanner.log 
+log_file = podcast_scanner.log
