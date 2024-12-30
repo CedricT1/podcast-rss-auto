@@ -6,7 +6,7 @@ Application web Flask pour gérer et diffuser des podcasts avec un flux RSS auto
 
 - 🎵 Lecture des podcasts en streaming
 - 📱 Interface responsive
-- 📡 Flux RSS automatique
+- 📡 Flux RSS automatique avec support iTunes
 - 🔄 Mise à jour automatique du catalogue
 - 📥 Téléchargement des épisodes
 - 📅 Tri chronologique des épisodes
@@ -36,7 +36,11 @@ cd podcast-rss-auto
      - `podcast_title` : Le titre de votre podcast
      - `podcast_description` : La description
      - `base_url` : L'URL de base de votre site (important pour le reverse proxy)
-     - Exemple : `base_url = https://podcasts.votredomaine.com`
+     - `author` : Le nom de l'auteur du podcast
+     - `email` : L'email de contact
+     - `language` : La langue du podcast (ex: fr)
+     - `image_url` : L'URL de l'image de couverture du podcast
+     - `categories` : Les catégories iTunes (séparées par des virgules)
    - Ajustez le port dans `docker-compose.yml` si nécessaire (par défaut : 5000)
 
 3. Créez le dossier pour vos podcasts :
@@ -86,12 +90,38 @@ Exemple : `010124_0615_emission-du-matin.mp3`
 ## Configuration
 
 Le fichier `config.ini` permet de configurer :
+
+### Configuration générale
 - `podcast_title` : Le titre du podcast
 - `podcast_description` : La description
 - `base_url` : L'URL de base du site (important pour le reverse proxy)
 - `podcast_directory` : Le répertoire des fichiers (par défaut : podcasts/)
 - `scan_interval` : L'intervalle de scan en secondes
+
+### Métadonnées du podcast
+- `author` : Le nom de l'auteur du podcast
+- `email` : L'email de contact
+- `language` : La langue du podcast (ex: fr)
+- `image_url` : L'URL de l'image de couverture du podcast
+- `categories` : Les catégories iTunes (séparées par des virgules)
+
+### Formats et scan
 - Les formats supportés : .mp3, .m4a, .wav
+- `recursive_scan` : Scanner les sous-dossiers
+- `read_id3_tags` : Lire les tags ID3 des fichiers
+- `generate_thumbnails` : Générer des miniatures
+
+## Flux RSS
+
+Le flux RSS généré inclut :
+- Les métadonnées complètes du podcast (titre, description, auteur, image)
+- Les catégories iTunes
+- Pour chaque épisode :
+  - Titre et description
+  - Date de publication au format RFC 822
+  - Fichier audio avec taille et type MIME
+  - GUID unique
+  - Résumé iTunes
 
 ## Docker Compose
 

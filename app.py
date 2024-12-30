@@ -8,6 +8,8 @@ import re
 from threading import Thread
 import time
 from urllib.parse import urljoin
+import mimetypes
+import email.utils
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your-secret-key'
@@ -27,8 +29,29 @@ PODCAST_CONFIG = {
     'metadata_fields': ['title', 'author', 'duration', 'published_date'],
     'title': config.get('podcasts', 'podcast_title', fallback='Podcasts'),
     'description': config.get('podcasts', 'podcast_description', fallback='Liste des podcasts disponibles'),
-    'base_url': config.get('podcasts', 'base_url', fallback='').rstrip('/')
+    'base_url': config.get('podcasts', 'base_url', fallback='').rstrip('/'),
+    'image_url': config.get('podcasts', 'image_url', fallback=''),
+    'author': config.get('podcasts', 'author', fallback=''),
+    'email': config.get('podcasts', 'email', fallback=''),
+    'categories': config.get('podcasts', 'categories', fallback='Religion & Spirituality').split(','),
+    'language': config.get('podcasts', 'language', fallback='fr')
 }
+
+def get_file_size(file_path):
+    """Get file size in bytes"""
+    try:
+        return os.path.getsize(file_path)
+    except OSError:
+        return 0
+
+def get_mime_type(file_path):
+    """Get MIME type of file"""
+    mime_type, _ = mimetypes.guess_type(file_path)
+    return mime_type or 'application/octet-stream'
+
+def format_rfc822_date(dt):
+    """Format datetime as RFC 822 string"""
+    return email.utils.format_datetime(dt)
 
 def get_full_url(endpoint, **kwargs):
     """Generate full URL using base_url from config if available"""
@@ -93,25 +116,55 @@ def download_file(filename):
 @app.route('/feed.xml')
 def rss_feed():
     fg = FeedGenerator()
+    fg.load_extension('podcast')
+    
+    # Configuration du podcast
     fg.title(PODCAST_CONFIG['title'])
     fg.description(PODCAST_CONFIG['description'])
+    fg.link(href=get_full_url('rss_feed'))
+    fg.language(PODCAST_CONFIG['language'])
     
-    # Use configured base URL for the feed link
-    feed_url = get_full_url('rss_feed')
-    fg.link(href=feed_url)
+    if PODCAST_CONFIG['image_url']:
+        fg.image(PODCAST_CONFIG['image_url'])
+        fg.podcast.itunes_image(PODCAST_CONFIG['image_url'])
+    
+    if PODCAST_CONFIG['author']:
+        fg.author({'name': PODCAST_CONFIG['author'], 'email': PODCAST_CONFIG['email']})
+        fg.podcast.itunes_author(PODCAST_CONFIG['author'])
+    
+    # Catégories iTunes
+    for category in PODCAST_CONFIG['categories']:
+        fg.podcast.itunes_category(category.strip())
     
     podcast_files = scan_podcasts()
     
     for podcast in podcast_files:
         fe = fg.add_entry()
         fe.title(podcast['title'])
-        # Use configured base URL for podcast links
-        fe.link(href=get_full_url('download_file', filename=podcast['url']))
-        fe.published(parse_date_from_filename(podcast['url']))
-        fe.description('Épisode de podcast')
         
-    response = make_response(fg.rss_str())
-    response.headers.set('Content-Type', 'application/rss+xml')
+        # URL du fichier audio
+        file_url = get_full_url('download_file', filename=podcast['url'])
+        fe.link(href=file_url)
+        
+        # Date de publication
+        pub_date = parse_date_from_filename(podcast['url'])
+        fe.published(pub_date)
+        fe.pubDate(format_rfc822_date(pub_date))
+        
+        # Description
+        description = f"Épisode diffusé le {format_date(pub_date)}"
+        fe.description(description)
+        fe.podcast.itunes_summary(description)
+        
+        # Fichier audio
+        file_path = os.path.join(os.getcwd(), PODCAST_CONFIG['scan_directory'], podcast['url'])
+        fe.enclosure(file_url, str(get_file_size(file_path)), get_mime_type(file_path))
+        
+        # GUID unique
+        fe.guid(file_url)
+        
+    response = make_response(fg.rss_str(pretty=True))
+    response.headers.set('Content-Type', 'application/rss+xml; charset=utf-8')
     return response
 
 def background_scan():

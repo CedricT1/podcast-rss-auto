@@ -6,8 +6,15 @@ podcast_description = Chaque jour retrouvez une heure de louange chez vous avec 
 # Base domain for RSS feed and links (without trailing slash)
 base_url = https://example.com
 
+# Podcast metadata
+author = Votre Nom
+email = contact@example.com
+language = fr
+image_url = https://example.com/podcast-cover.jpg
+categories = Religion & Spirituality,Christianity
+
 # Directory where podcast files are stored
-podcast_directory = data/podcasts
+podcast_directory = podcasts
 
 # Supported audio formats
 supported_formats = mp3,m4a,wav
