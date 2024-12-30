@@ -26,19 +26,29 @@ cd podcast-rss-auto
 ```
 
 2. Configurez votre environnement :
-   - Copiez le fichier `config.ini.example` vers `config.ini`
-   - Modifiez les paramètres selon vos besoins
+   - Copiez les fichiers d'exemple :
+     ```bash
+     cp config.ini.example config.ini
+     cp docker-compose.yml.example docker-compose.yml
+     ```
+   - Modifiez les paramètres dans `config.ini` selon vos besoins
+   - Ajustez le port dans `docker-compose.yml` si nécessaire (par défaut : 5000)
 
-3. Démarrez l'application :
+3. Créez le dossier pour vos podcasts :
+```bash
+mkdir -p podcasts
+```
+
+4. Démarrez l'application :
 ```bash
 docker-compose up --build
 ```
 
-L'application sera accessible à l'adresse : `http://localhost:7740`
+L'application sera accessible à l'adresse : `http://localhost:5000`
 
 ## Structure des fichiers podcasts
 
-Les fichiers audio doivent être placés dans le dossier `data/podcasts` avec le format de nom suivant :
+Les fichiers audio doivent être placés dans le dossier `podcasts` avec le format de nom suivant :
 ```
 JJMMAA_HHMM_titre-de-l-episode.mp3
 ```
@@ -47,17 +57,27 @@ Exemple : `010124_0615_emission-du-matin.mp3`
 ## Configuration
 
 Le fichier `config.ini` permet de configurer :
-- Le titre du podcast
-- La description
-- Le répertoire des fichiers
-- L'intervalle de scan
-- Les formats supportés
+- `podcast_title` : Le titre du podcast
+- `podcast_description` : La description
+- `podcast_directory` : Le répertoire des fichiers (par défaut : podcasts/)
+- `scan_interval` : L'intervalle de scan en secondes
+- Les formats supportés : .mp3, .m4a, .wav
+
+## Docker Compose
+
+Le fichier `docker-compose.yml` configure :
+- Le port d'exposition (5000 par défaut)
+- Les volumes pour les podcasts et la configuration
+- La politique de redémarrage
 
 ## Développement
 
-Pour lancer les tests :
+Pour lancer l'application en mode développement :
 ```bash
-pytest
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+python app.py
 ```
 
 ## Licence
