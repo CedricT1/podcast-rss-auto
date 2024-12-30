@@ -1,0 +1,4 @@
+# Ignore contents of data/podcasts directory but keep the directory structure
+data/podcasts/*
+!data/podcasts/.gitkeepvenv/
+__pycache__/

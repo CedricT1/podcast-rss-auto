@@ -1,0 +1,23 @@
+[podcasts]
+# Titre du podcast
+podcast_title = Mon Podcast
+podcast_description = Description de mon podcast
+
+# Répertoire des fichiers podcasts
+podcast_directory = data/podcasts
+
+# Formats audio supportés
+supported_formats = mp3,m4a,wav
+
+# Paramètres de scan
+scan_interval = 3600
+recursive_scan = true
+
+# Paramètres des métadonnées
+read_id3_tags = true
+generate_thumbnails = true
+
+[logging]
+# Configuration des logs
+log_level = INFO
+log_file = podcast_scanner.log 
