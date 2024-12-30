@@ -2,3 +2,4 @@
 data/podcasts/*
 !data/podcasts/.gitkeepvenv/
 __pycache__/
+config.ini
