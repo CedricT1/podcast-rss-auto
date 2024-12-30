@@ -11,6 +11,7 @@ Application web Flask pour gérer et diffuser des podcasts avec un flux RSS auto
 - 📥 Téléchargement des épisodes
 - 📅 Tri chronologique des épisodes
 - 🎨 Interface moderne avec Bootstrap
+- 🔗 Support des reverse proxy avec URLs configurables
 
 ## Prérequis
 
@@ -31,7 +32,11 @@ cd podcast-rss-auto
      cp config.ini.example config.ini
      cp docker-compose.yml.example docker-compose.yml
      ```
-   - Modifiez les paramètres dans `config.ini` selon vos besoins
+   - Modifiez les paramètres dans `config.ini` selon vos besoins :
+     - `podcast_title` : Le titre de votre podcast
+     - `podcast_description` : La description
+     - `base_url` : L'URL de base de votre site (important pour le reverse proxy)
+     - Exemple : `base_url = https://podcasts.votredomaine.com`
    - Ajustez le port dans `docker-compose.yml` si nécessaire (par défaut : 5000)
 
 3. Créez le dossier pour vos podcasts :
@@ -44,7 +49,31 @@ mkdir -p podcasts
 docker-compose up --build
 ```
 
-L'application sera accessible à l'adresse : `http://localhost:5000`
+L'application sera accessible à l'adresse configurée dans `base_url` ou `http://localhost:5000` en local.
+
+## Configuration avec Reverse Proxy
+
+L'application est conçue pour fonctionner derrière un reverse proxy. Pour cela :
+
+1. Dans `config.ini`, configurez `base_url` avec l'URL publique de votre site :
+   ```ini
+   base_url = https://podcasts.votredomaine.com
+   ```
+   Cette URL sera utilisée pour :
+   - Les liens dans le flux RSS
+   - Les URLs de téléchargement des fichiers
+   - Les liens de navigation dans l'interface
+
+2. Configurez votre reverse proxy pour rediriger le trafic vers le port de l'application (5000 par défaut)
+
+3. Exemple de configuration Nginx :
+   ```nginx
+   location / {
+       proxy_pass http://localhost:5000;
+       proxy_set_header Host $host;
+       proxy_set_header X-Real-IP $remote_addr;
+   }
+   ```
 
 ## Structure des fichiers podcasts
 
@@ -59,6 +88,7 @@ Exemple : `010124_0615_emission-du-matin.mp3`
 Le fichier `config.ini` permet de configurer :
 - `podcast_title` : Le titre du podcast
 - `podcast_description` : La description
+- `base_url` : L'URL de base du site (important pour le reverse proxy)
 - `podcast_directory` : Le répertoire des fichiers (par défaut : podcasts/)
 - `scan_interval` : L'intervalle de scan en secondes
 - Les formats supportés : .mp3, .m4a, .wav
