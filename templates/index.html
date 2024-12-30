@@ -32,10 +32,10 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-light mb-4">
         <div class="container">
-            <a class="navbar-brand" href="/">
+            <a class="navbar-brand" href="{{ get_full_url('index') }}">
                 <i class="bi bi-broadcast"></i> {{ config.title }}
             </a>
-            <a href="{{ url_for('rss_feed') }}" class="btn btn-rss" target="_blank">
+            <a href="{{ get_full_url('rss_feed') }}" class="btn btn-rss" target="_blank">
                 <i class="bi bi-rss-fill"></i> S'abonner au flux RSS
             </a>
         </div>
@@ -54,10 +54,10 @@
                             <i class="bi bi-calendar-event"></i> {{ podcast.date }}
                         </p>
                         <audio controls class="w-100 mb-3">
-                            <source src="{{ url_for('download_file', filename=podcast.url) }}" type="audio/mpeg">
+                            <source src="{{ get_full_url('download_file', filename=podcast.url) }}" type="audio/mpeg">
                             Votre navigateur ne supporte pas la lecture audio.
                         </audio>
-                        <a href="{{ url_for('download_file', filename=podcast.url) }}" class="btn btn-primary">
+                        <a href="{{ get_full_url('download_file', filename=podcast.url) }}" class="btn btn-primary">
                             <i class="bi bi-download"></i> Télécharger
                         </a>
                     </div>
@@ -69,7 +69,7 @@
 
     <footer class="mt-5 py-3 bg-light">
         <div class="container text-center">
-            <p class="mb-0">© {{ now.year }} Podcasts - <a href="{{ url_for('rss_feed') }}" class="text-decoration-none">Flux RSS</a></p>
+            <p class="mb-0">© {{ now.year }} Podcasts - <a href="{{ get_full_url('rss_feed') }}" class="text-decoration-none">Flux RSS</a></p>
         </div>
     </footer>
 

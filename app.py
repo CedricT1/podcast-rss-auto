@@ -7,6 +7,7 @@ from feedgen.feed import FeedGenerator
 import re
 from threading import Thread
 import time
+from urllib.parse import urljoin
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your-secret-key'
@@ -25,8 +26,16 @@ PODCAST_CONFIG = {
     'supported_formats': ['.mp3', '.m4a', '.wav'],
     'metadata_fields': ['title', 'author', 'duration', 'published_date'],
     'title': config.get('podcasts', 'podcast_title', fallback='Podcasts'),
-    'description': config.get('podcasts', 'podcast_description', fallback='Liste des podcasts disponibles')
+    'description': config.get('podcasts', 'podcast_description', fallback='Liste des podcasts disponibles'),
+    'base_url': config.get('podcasts', 'base_url', fallback='').rstrip('/')
 }
+
+def get_full_url(endpoint, **kwargs):
+    """Generate full URL using base_url from config if available"""
+    if PODCAST_CONFIG['base_url']:
+        path = url_for(endpoint, _external=False, **kwargs)
+        return urljoin(PODCAST_CONFIG['base_url'] + '/', path.lstrip('/'))
+    return url_for(endpoint, _external=True, **kwargs)
 
 # Function to parse date from filename
 def parse_date_from_filename(filename):
@@ -74,7 +83,7 @@ def scan_podcasts():
 @app.route('/')
 def index():
     podcast_files = scan_podcasts()
-    return render_template('index.html', podcasts=podcast_files, now=datetime.now(), config=PODCAST_CONFIG)
+    return render_template('index.html', podcasts=podcast_files, now=datetime.now(), config=PODCAST_CONFIG, get_full_url=get_full_url)
 
 @app.route('/download/<path:filename>')
 def download_file(filename):
@@ -84,16 +93,20 @@ def download_file(filename):
 @app.route('/feed.xml')
 def rss_feed():
     fg = FeedGenerator()
-    fg.title('Podcasts')
-    fg.description('Liste des podcasts disponibles')
-    fg.link(href=request.url_root)
+    fg.title(PODCAST_CONFIG['title'])
+    fg.description(PODCAST_CONFIG['description'])
+    
+    # Use configured base URL for the feed link
+    feed_url = get_full_url('rss_feed')
+    fg.link(href=feed_url)
     
     podcast_files = scan_podcasts()
     
     for podcast in podcast_files:
         fe = fg.add_entry()
         fe.title(podcast['title'])
-        fe.link(href=url_for('download_file', filename=podcast['url'], _external=False))
+        # Use configured base URL for podcast links
+        fe.link(href=get_full_url('download_file', filename=podcast['url']))
         fe.published(parse_date_from_filename(podcast['url']))
         fe.description('Épisode de podcast')
         

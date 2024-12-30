@@ -3,6 +3,9 @@
 podcast_title = Une heure de louange chez vous, chaque matin à partir de 6h15
 podcast_description = Chaque jour retrouvez une heure de louange chez vous avec ses chroniques
 
+# Base domain for RSS feed and links (without trailing slash)
+base_url = https://example.com
+
 # Directory where podcast files are stored
 podcast_directory = data/podcasts
 
