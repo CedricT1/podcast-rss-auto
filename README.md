@@ -21,7 +21,7 @@ Application web Flask pour gérer et diffuser des podcasts avec un flux RSS auto
 
 1. Clonez le dépôt :
 ```bash
-git clone git@github.com:CedricT1/podcast-rss-automatic.git
+git clone https://github.com/CedricT1/podcast-rss-auto.git
 cd podcast-rss-automatic
 ```
 
