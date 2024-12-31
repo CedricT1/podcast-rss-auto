@@ -1,1 +1,1 @@
-version: "3"\nservices:\n  podcast-rss:\n    build: .\n    ports:\n      - "5000:5000"\n    volumes:\n      - ./podcasts:/app/podcasts\n      - ./config.ini:/app/config.ini\n    restart: unless-stopped
+version: "3"\nservices:\n  podcast-rss:\n    build: .\n    ports:\n      - "5000:5000"\n    volumes:\n      - ./podcasts:/app/podcasts\n      - ./static:/app/static\n      - ./config.ini:/app/config.ini\n    restart: unless-stopped

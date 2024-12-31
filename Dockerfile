@@ -12,12 +12,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY requirements.txt .
 COPY app.py .
 COPY templates/ templates/
+COPY static/ static/
 
 # Installation des dépendances Python
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Création du répertoire pour les podcasts
-RUN mkdir -p data/podcasts
+# Création des répertoires nécessaires
+RUN mkdir -p podcasts
 
 # Variables d'environnement
 ENV FLASK_APP=app.py
