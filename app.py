@@ -124,9 +124,17 @@ def rss_feed():
     fg.link(href=get_full_url('rss_feed'))
     fg.language(PODCAST_CONFIG['language'])
     
-    if PODCAST_CONFIG['image_url']:
-        fg.image(PODCAST_CONFIG['image_url'])
-        fg.podcast.itunes_image(PODCAST_CONFIG['image_url'])
+    # Gestion de l'image avec URL absolue
+    if PODCAST_CONFIG['image_url'].startswith('/static/'):
+        # Si c'est un chemin relatif, on le convertit en URL absolue
+        image_url = urljoin(PODCAST_CONFIG['base_url'] + '/', PODCAST_CONFIG['image_url'].lstrip('/'))
+    else:
+        # Si c'est déjà une URL absolue, on la garde telle quelle
+        image_url = PODCAST_CONFIG['image_url']
+    
+    if image_url:
+        fg.image(image_url)
+        fg.podcast.itunes_image(image_url)
     
     if PODCAST_CONFIG['author']:
         fg.author({'name': PODCAST_CONFIG['author'], 'email': PODCAST_CONFIG['email']})
